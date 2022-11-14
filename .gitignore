@@ -31,3 +31,7 @@
 *.out
 *.app
 *.vscode
+
+# Documents
+*.pdf
+*.doc
