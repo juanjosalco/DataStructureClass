@@ -1,7 +1,18 @@
-/// Act 3.4 - Comprehensive BST activity (competence evidence)
+/// Act 4.3 - Comprehensive Graph Activity (Competence evidence)
 /// Author: Juan Jose Salazar Cortes
 /// Author: Mariana Esquivel Hernandez
-/// date: 11/02/2022
+/// date: 11/14/2022
+
+
+// Abra el archivo de entrada llamado "bitacora.txt Download bitacora.txt Vista previa del documento" 
+// lealo y almacene los datos en en una lista de adyacencia organizada por dirección de ip origen 
+// (Formato del archivo bitacora.pdf Download Formato del archivo bitacora.pdfVista previa del documento). 
+// Por ejemplo la lista 192.168.1.3 => {192: 168, 168:1, 1:3}
+
+// Determine el degree y el outdegree de cada nodo
+
+// ¿Qué nodos tienen el mayor degree y cuales el mayor outdegree?
+
 
 //#include <bits/stdc++.h>
 
@@ -14,8 +25,98 @@
 #include <queue>
 #include <map>
 #include <array>
+#include <list>
 
 using namespace std;
+
+class Graph
+{
+private:
+    int numVertices;
+    list<int> *adjList;
+    bool *visited;
+    // int **adjMatrix;
+
+public:
+    Graph(int V)
+    {
+        numVertices = V;
+        adjList = new list<int>[V];
+        visited = new bool[V];
+        // adjMatrix = new int*[V];
+        // for(int i=0; i<V; i++)
+        //     adjMatrix[i] = new int[V];
+        // for(int i=0; i<V; i++)
+        //     for(int j=0; j<V; j++)
+        //         adjMatrix[i][j] = 0;
+    }
+
+    ~Graph()
+    {
+        delete[] adjList;
+        delete[] visited;
+    }
+
+
+    void loadGraph(int a, int b);
+    void DFS(int);
+    void BFS(int);
+    void resetVisited();
+    // void printAdjMatrix();
+};
+
+void Graph::loadGraph(int a, int b){
+    // adjMatrix[a][b] = 1;
+    // adjMatrix[b][a] = 1;
+    adjList[a].push_back(b);
+} // Complexity O(1)
+
+void Graph::resetVisited()
+{
+    for (int i = 0; i < this->numVertices; i++)
+        this->visited[i] = false;
+} // Complexity O(V)
+
+// Deep For Search
+void Graph::DFS(int vertex)
+{
+    this->visited[vertex] = true;
+    list<int> adjVertex = this->adjList[vertex];
+
+    cout << vertex << " ";
+
+    for (auto i : adjVertex)
+        if (!this->visited[i])
+            DFS(i);
+} // Complexity: O(V + E)
+
+// Breadth First Search
+void Graph::BFS(int startVertex)
+{
+    visited[startVertex] = true;
+
+    list<int> queue;
+    queue.push_back(startVertex);
+
+    while (!queue.empty())
+    {
+        int currVertex = queue.front();
+
+        cout << currVertex << " ";
+
+        queue.pop_front();
+
+        for (auto i : adjList[currVertex])
+        {
+            if (!visited[i])
+            {
+                visited[i] = true;
+                queue.push_back(i);
+            }
+        }
+    }
+}// Complexity O(V + E) - Space Complexity O(V)
+
 
 struct Node{
     string IP;
