@@ -1,8 +1,7 @@
 /// Act 4.3 - Comprehensive Graph Activity (Competence evidence)
 /// Author: Juan Jose Salazar Cortes
 /// Author: Mariana Esquivel Hernandez
-/// date: 11/14/2022
-
+/// date: 11/15/2022
 
 // Abra el archivo de entrada llamado "bitacora.txt Download bitacora.txt Vista previa del documento" 
 // lealo y almacene los datos en en una lista de adyacencia organizada por dirección de ip origen 
@@ -10,12 +9,12 @@
 // Por ejemplo la lista 192.168.1.3 => {192: 168, 168:1, 1:3}
 
 // Determine el degree y el outdegree de cada nodo
-
 // ¿Qué nodos tienen el mayor degree y cuales el mayor outdegree?
 
 
 //#include <bits/stdc++.h>
 
+// No se cuales librerias si borrar. Por el momento NO BORRAR NINGUNA
 #include <iostream>
 #include <string>
 #include <vector>
@@ -26,6 +25,9 @@
 #include <map>
 #include <array>
 #include <list>
+#include <stdio.h>
+#include <string.h>
+#include <cstring>
 
 using namespace std;
 
@@ -43,12 +45,6 @@ public:
         numVertices = V;
         adjList = new list<int>[V];
         visited = new bool[V];
-        // adjMatrix = new int*[V];
-        // for(int i=0; i<V; i++)
-        //     adjMatrix[i] = new int[V];
-        // for(int i=0; i<V; i++)
-        //     for(int j=0; j<V; j++)
-        //         adjMatrix[i][j] = 0;
     }
 
     ~Graph()
@@ -56,18 +52,12 @@ public:
         delete[] adjList;
         delete[] visited;
     }
-
-
     void loadGraph(int a, int b);
-    void DFS(int);
-    void BFS(int);
     void resetVisited();
-    // void printAdjMatrix();
+    void printGraph();
 };
 
 void Graph::loadGraph(int a, int b){
-    // adjMatrix[a][b] = 1;
-    // adjMatrix[b][a] = 1;
     adjList[a].push_back(b);
 } // Complexity O(1)
 
@@ -77,139 +67,18 @@ void Graph::resetVisited()
         this->visited[i] = false;
 } // Complexity O(V)
 
-// Deep For Search
-void Graph::DFS(int vertex)
+void Graph::printGraph()
 {
-    this->visited[vertex] = true;
-    list<int> adjVertex = this->adjList[vertex];
-
-    cout << vertex << " ";
-
-    for (auto i : adjVertex)
-        if (!this->visited[i])
-            DFS(i);
-} // Complexity: O(V + E)
-
-// Breadth First Search
-void Graph::BFS(int startVertex)
-{
-    visited[startVertex] = true;
-
-    list<int> queue;
-    queue.push_back(startVertex);
-
-    while (!queue.empty())
+    for (int i = 1; i < this->numVertices; i++)
     {
-        int currVertex = queue.front();
-
-        cout << currVertex << " ";
-
-        queue.pop_front();
-
-        for (auto i : adjList[currVertex])
-        {
-            if (!visited[i])
-            {
-                visited[i] = true;
-                queue.push_back(i);
-            }
-        }
+        cout << "\nVertex " << i << ":";
+        for (auto x : this->adjList[i])
+            cout << " -> " << x;
+        cout << endl;
     }
-}// Complexity O(V + E) - Space Complexity O(V)
+}
 
-
-struct Node{
-    string IP;
-    int rep;
-    Node(string value): IP(value), rep(1){};
-};
-
-class maxHeap{
-    private:
-        int size = 0;
-        vector<Node> heapTree = {};    
-        int parent(int index) {
-            return (index - 1) >> 1;
-            }; 
-        int left(int index) {
-            return (index << 1) + 1;
-            };  
-        int right(int index) {
-            return (index << 1) + 2;
-            };  
-    public:
-        bool isEmpty() const {
-            return size == 0;
-            };
-        void insertion(string value); 
-        void top(int index);
-        void shiftUp(int index); 
-        void shiftDown(int index);
-};
-
-//Check if IP already exists and add to the repetitions and shift Up to move the IP further up the heap
-//If it's a new value on the heap, insert it at the end and sift up to move it further up the heap
-//If the heap is empty, insert the first element
-
-void maxHeap::insertion(string value){
-    if(size == 0){
-        heapTree.push_back(Node(value));
-        size+=1;
-        return;
-    }
-    for(int i = 0; i < size; i++){
-        if(heapTree[i].IP == value){
-            heapTree[i].rep++;
-            shiftUp(i);
-            return;
-        }
-    }
-    heapTree.push_back(Node(value));
-    size+=1;
-    shiftUp(size-1);
-    return;
-}//Time complexity: O(n)
-
-void maxHeap::top(int index){
-    string maxIP = heapTree[0].IP;    
-    int maxReps = heapTree[0].rep;
-    cout << "IP-."<< index+1 << " "<< maxIP + " is being repeated: " << to_string(maxReps) << " times "<< endl;
-    swap(heapTree[0], heapTree[size-1]);
-    shiftDown(0);
-    size -= 1;
-}//Time complexity: O(log n)
-
-void maxHeap::shiftUp(int index){
-    if(index == 0) return; 
-    int parentIndex = parent(index);
-    if(heapTree[parentIndex].rep < heapTree[index].rep){
-        swap(heapTree[parentIndex], heapTree[index]);
-    } 
-    else if( heapTree[parentIndex].rep == heapTree[index].rep && heapTree[parentIndex].IP != heapTree[index].IP){ 
-        swap(heapTree[parentIndex], heapTree[index]);
-    }
-    shiftUp(parentIndex);
-}//Time complexity: O(log n)
-
-void maxHeap::shiftDown(int index){
-    if(size <= index){
-        return; 
-    }
-    int aux = index;
-    if((left(index) < size) && (heapTree[index].rep < heapTree[left(index)].rep)){
-        aux = left(index);
-    }
-    if((right(index) < size) && (heapTree[aux].rep < heapTree[right(index)].rep)){
-        aux = right(index);      
-    }
-    if(aux != index){
-        swap(heapTree[index], heapTree[aux]);
-        shiftDown(aux);
-    }   
-    return;
-}//Time Complexity O(log n)
-
-// Take the IP from the line
+// Take the IP from the line 
 string getIP(string record){
     long long contEsp = 0;
     long long indexBeg;
@@ -239,22 +108,52 @@ string getIPAccess(string IP){
 
 int main(){
     fflush(stdin);
+    Graph g(1000);
     vector<string> info;
     vector<string> IP;
     string record;
-    maxHeap* priorityQueue = new maxHeap();
     ifstream OurReadFile("bitacora.txt");
     vector<string> lines;
     string line;
+    string IPnumber;
+    int val = 0;
 
+    // Do not be afraid of what is happening here
+    // You are safe now my child
     while(getline(OurReadFile,line)){
-        priorityQueue->insertion(getIPAccess(getIP(line)));
-    }//Time complexity: O(n log n)
+        IPnumber = getIPAccess(getIP(line));
+        //Time complexity: O(n log n)
+        string s = IPnumber;
+        //a function to convert the string "1.2.3.4" to a char array
+        char* char_arr;
+        string str_obj(s);
+        char_arr = &str_obj[0];
+        //create a vector of char* to hold the tokens
+        vector<char*> v;
+        char * pch;
+        pch = strtok (char_arr,".");
+        while (pch != NULL)
+        {
+        v.push_back(pch);
+        pch = strtok (NULL, " ,.-");
+        }
+        for(int i=0; i<v.size(); i++)
+        {
+            int val = i;
+            int value1 = atoi(v[val]);
+            int value2 = 0;
+            if(val + 1 < v.size())
+            {
+                int value2 = atoi(v[val+1]);
+                g.loadGraph(value1, value2);
+            }
+            else
+            {
+                g.loadGraph(value2, 0);  
+            }
+        }
+    }
+    g.printGraph(); //Quitar si quieres dejar de ver el grafo en consola
     OurReadFile.close();
-    cout << "----------------------------Number of accesses for IP address-----------------------------" << endl;
-    for(int i = 0; i < 5; i++){
-        priorityQueue->top(i);
-    }//Complexity O(nlogn)
-
     return 0;
 }
