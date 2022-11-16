@@ -35,16 +35,23 @@ class Graph
 {
 private:
     int numVertices;
-    list<int> *adjList;
+    vector<int> *adjList;
     bool *visited;
+    int **degreeList;
     // int **adjMatrix;
 
 public:
     Graph(int V)
     {
         numVertices = V;
-        adjList = new list<int>[V];
+        adjList = new vector<int>[numVertices];
         visited = new bool[V];
+        degreeList = new int*[numVertices];
+        for(int i = 0; i < numVertices; i++){
+                degreeList[i] = new int[2];
+                degreeList[i][0] = 0;
+                degreeList[i][1] = 0;
+            }
     }
 
     ~Graph()
@@ -55,10 +62,19 @@ public:
     void loadGraph(int a, int b);
     void resetVisited();
     void printGraph();
+    void printDegreeList();
+    void getBiggestDegrees();
 };
 
 void Graph::loadGraph(int a, int b){
+    for(int i = 0; i < adjList[a].size(); i++){
+        if(adjList[a][i] == b){
+            return;
+        }
+    }
     adjList[a].push_back(b);
+    degreeList[a][0]++;
+    degreeList[b][1]++;
 } // Complexity O(1)
 
 void Graph::resetVisited()
@@ -106,9 +122,33 @@ string getIPAccess(string IP){
     return access;
 } // Time Complexity O(n)
 
+void Graph::getBiggestDegrees(){
+    //Complexity: O(n)
+    int biggestIn = 0, biggestOut = 0, index1 = 0, index2 = 0;
+    for(int i = 0; i < numVertices; i++){
+        if(degreeList[i][0] > biggestIn){
+            biggestIn = degreeList[i][0];
+            index1 = i;
+        }
+        if(degreeList[i][1] > biggestOut){
+            biggestOut = degreeList[i][1];
+            index2 = i;
+        }
+    }
+    cout << "Biggest out-degree: (" << index1 << ") " << biggestIn << endl;
+    cout << "Biggest in-degree: (" << index2 << ") "<< biggestOut << endl;
+};  
+
+void Graph::printDegreeList(){
+    //Complexity: O(n)  
+    for(int i = 0; i < numVertices; i++){
+        cout << "Sub-ip (" << i << ") Outdegree " << degreeList[i][0] << " Indegree " << degreeList[i][1] << endl;
+    }
+}
+
 int main(){
     fflush(stdin);
-    Graph g(1000);
+    Graph g(999);
     vector<string> info;
     vector<string> IP;
     string record;
@@ -155,5 +195,9 @@ int main(){
     }
     g.printGraph(); //Quitar si quieres dejar de ver el grafo en consola
     OurReadFile.close();
+        cout << "\n---Degree List---\n" << endl;
+    g.printDegreeList();
+    cout << "\n---Biggest Degrees---\n" << endl;
+    g.getBiggestDegrees();
     return 0;
 }
