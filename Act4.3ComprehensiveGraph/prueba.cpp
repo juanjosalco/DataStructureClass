@@ -93,7 +93,7 @@ void Graph::printGraph()
             cout << " -> " << x;
         cout << endl;
     }
-}
+} // Time Complexity O(n)
 
 // Take the IP from the line 
 string getIP(string record){
@@ -124,7 +124,6 @@ string getIPAccess(string IP){
 } // Time Complexity O(n)
 
 void Graph::maxAndMinDegree(){
-    //Complexity: O(n)
     int maxInDegree = 0, maxOutDegree = 0, cont1 = 0, cont2 = 0;
     for(int i = 0; i < numVertices; i++){
         if(matrixDegreeList[i][0] > maxInDegree){
@@ -138,10 +137,9 @@ void Graph::maxAndMinDegree(){
     }
     cout << "The Node With More OutDegree is: " << cont1 << " with: " << maxInDegree << endl;
     cout << "The Node With More InDegree is: " << cont2 << " with "<< maxOutDegree << endl<<endl;
-};  
+}; //Time Complexity: O(n) 
 
 void Graph::printDegreeNodes(){
-    //Complexity: O(n) 
     cout << "------------------------------------------" << endl;
     cout << "Node\t\tOutDegree\tInDegree" << " | " << endl;
     cout << "------------------------------------------" << endl;
@@ -149,7 +147,7 @@ void Graph::printDegreeNodes(){
         cout << i << "\t\t"<< matrixDegreeList[i][0] << "\t\t" << matrixDegreeList[i][1] << "\t | " << endl;
     }
     cout << "------------------------------------------" << endl;
-}
+} // Time Complexity: O(n) 
 
 int main(){
     fflush(stdin);
