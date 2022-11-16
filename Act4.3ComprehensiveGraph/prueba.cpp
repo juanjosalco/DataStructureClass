@@ -37,7 +37,7 @@ private:
     int numVertices;
     vector<int> *adjList;
     bool *visited;
-    int **degreeList;
+    int **matrixDegreeList;
     // int **adjMatrix;
 
 public:
@@ -46,24 +46,25 @@ public:
         numVertices = V;
         adjList = new vector<int>[numVertices];
         visited = new bool[V];
-        degreeList = new int*[numVertices];
+        matrixDegreeList = new int*[numVertices];
         for(int i = 0; i < numVertices; i++){
-                degreeList[i] = new int[2];
-                degreeList[i][0] = 0;
-                degreeList[i][1] = 0;
-            }
+            matrixDegreeList[i] = new int[2];
+            matrixDegreeList[i][0] = 0;
+            matrixDegreeList[i][1] = 0;
+        }
     }
 
     ~Graph()
     {
         delete[] adjList;
         delete[] visited;
+        delete[] matrixDegreeList;
     }
     void loadGraph(int a, int b);
     void resetVisited();
     void printGraph();
-    void printDegreeList();
-    void getBiggestDegrees();
+    void printDegreeNodes();
+    void maxAndMinDegree();
 };
 
 void Graph::loadGraph(int a, int b){
@@ -73,8 +74,8 @@ void Graph::loadGraph(int a, int b){
         }
     }
     adjList[a].push_back(b);
-    degreeList[a][0]++;
-    degreeList[b][1]++;
+    matrixDegreeList[a][0]++;
+    matrixDegreeList[b][1]++;
 } // Complexity O(1)
 
 void Graph::resetVisited()
@@ -122,28 +123,32 @@ string getIPAccess(string IP){
     return access;
 } // Time Complexity O(n)
 
-void Graph::getBiggestDegrees(){
+void Graph::maxAndMinDegree(){
     //Complexity: O(n)
-    int biggestIn = 0, biggestOut = 0, index1 = 0, index2 = 0;
+    int maxInDegree = 0, maxOutDegree = 0, cont1 = 0, cont2 = 0;
     for(int i = 0; i < numVertices; i++){
-        if(degreeList[i][0] > biggestIn){
-            biggestIn = degreeList[i][0];
-            index1 = i;
+        if(matrixDegreeList[i][0] > maxInDegree){
+            maxInDegree = matrixDegreeList[i][0];
+            cont1 = i;
         }
-        if(degreeList[i][1] > biggestOut){
-            biggestOut = degreeList[i][1];
-            index2 = i;
+        if(matrixDegreeList[i][1] > maxOutDegree){
+            maxOutDegree = matrixDegreeList[i][1];
+            cont2 = i;
         }
     }
-    cout << "Biggest out-degree: (" << index1 << ") " << biggestIn << endl;
-    cout << "Biggest in-degree: (" << index2 << ") "<< biggestOut << endl;
+    cout << "The Node With More OutDegree is: " << cont1 << " with: " << maxInDegree << endl;
+    cout << "The Node With More InDegree is: " << cont2 << " with "<< maxOutDegree << endl<<endl;
 };  
 
-void Graph::printDegreeList(){
-    //Complexity: O(n)  
+void Graph::printDegreeNodes(){
+    //Complexity: O(n) 
+    cout << "------------------------------------------" << endl;
+    cout << "Node\t\tOutDegree\tInDegree" << " | " << endl;
+    cout << "------------------------------------------" << endl;
     for(int i = 0; i < numVertices; i++){
-        cout << "Sub-ip (" << i << ") Outdegree " << degreeList[i][0] << " Indegree " << degreeList[i][1] << endl;
+        cout << i << "\t\t"<< matrixDegreeList[i][0] << "\t\t" << matrixDegreeList[i][1] << "\t | " << endl;
     }
+    cout << "------------------------------------------" << endl;
 }
 
 int main(){
@@ -193,11 +198,10 @@ int main(){
             }
         }
     }
-    g.printGraph(); //Quitar si quieres dejar de ver el grafo en consola
     OurReadFile.close();
-        cout << "\n---Degree List---\n" << endl;
-    g.printDegreeList();
-    cout << "\n---Biggest Degrees---\n" << endl;
-    g.getBiggestDegrees();
+    cout << "\n------ List With In and Out Degrees ------\n" << endl;
+    g.printDegreeNodes();
+    cout << "\n--- Nodes With More In And Out Degrees ---\n" << endl;
+    g.maxAndMinDegree();
     return 0;
 }
