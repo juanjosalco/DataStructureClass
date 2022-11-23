@@ -152,7 +152,7 @@ int main(){
     }//Time complexity: O(n log n)
     OurReadFile.close();
     cout << "----------------------------Number of accesses for IP address-----------------------------" << endl;
-    for(int i = 0; i < 5; i++){
+    for(int i = 0; i < 10; i++){
         priorityQueue->top(i);
     }//Complexity O(nlogn)
 
