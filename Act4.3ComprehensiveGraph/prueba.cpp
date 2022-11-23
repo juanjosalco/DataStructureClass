@@ -1,70 +1,55 @@
-/// Act 4.3 - Comprehensive Graph Activity (Competence evidence)
-/// Author: Juan Jose Salazar Cortes
-/// Author: Mariana Esquivel Hernandez
-/// date: 11/15/2022
-
-// Abra el archivo de entrada llamado "bitacora.txt Download bitacora.txt Vista previa del documento" 
-// lealo y almacene los datos en en una lista de adyacencia organizada por dirección de ip origen 
-// (Formato del archivo bitacora.pdf Download Formato del archivo bitacora.pdfVista previa del documento). 
-// Por ejemplo la lista 192.168.1.3 => {192: 168, 168:1, 1:3}
-
-// Determine el degree y el outdegree de cada nodo
-// ¿Qué nodos tienen el mayor degree y cuales el mayor outdegree?
-
-
-//#include <bits/stdc++.h>
+#include <bits/stdc++.h>
 
 // No se cuales librerias si borrar. Por el momento NO BORRAR NINGUNA
-#include <iostream>
-#include <string>
-#include <vector>
-#include <fstream>
-#include <algorithm>
-#include <typeinfo>
-#include <queue>
-#include <map>
-#include <array>
-#include <list>
-#include <stdio.h>
-#include <string.h>
-#include <cstring>
+// #include <iostream>
+// #include <string>
+// #include <vector>
+// #include <fstream>
+// #include <algorithm>
+// #include <typeinfo>
+// #include <queue>
+// #include <map>
+// #include <array>
+// #include <list>
+// #include <stdio.h>
+// #include <string.h>
+// #include <cstring>
 
 using namespace std;
 
 class Graph
 {
 private:
-    int numVertices;
+    int numNodes;
     vector<int> *adjList;
     bool *visited;
-    int **matrixDegreeList;
+    int **degreeList;
     // int **adjMatrix;
 
 public:
     Graph(int V)
     {
-        numVertices = V;
-        adjList = new vector<int>[numVertices];
+        numNodes = V;
+        adjList = new vector<int>[numNodes];
         visited = new bool[V];
-        matrixDegreeList = new int*[numVertices];
-        for(int i = 0; i < numVertices; i++){
-            matrixDegreeList[i] = new int[2];
-            matrixDegreeList[i][0] = 0;
-            matrixDegreeList[i][1] = 0;
-        }
+        degreeList = new int*[numNodes];
+        for(int i = 0; i < numNodes; i++){
+                degreeList[i] = new int[2];
+                degreeList[i][0] = 0;
+                degreeList[i][1] = 0;
+            }
     }
 
     ~Graph()
     {
         delete[] adjList;
         delete[] visited;
-        delete[] matrixDegreeList;
     }
     void loadGraph(int a, int b);
     void resetVisited();
     void printGraph();
-    void printDegreeNodes();
-    void maxAndMinDegree();
+    void nodeDegree();
+    void InOutDegree();
 };
 
 void Graph::loadGraph(int a, int b){
@@ -74,26 +59,52 @@ void Graph::loadGraph(int a, int b){
         }
     }
     adjList[a].push_back(b);
-    matrixDegreeList[a][0]++;
-    matrixDegreeList[b][1]++;
+    degreeList[a][0]++;
+    degreeList[b][1]++;
 } // Complexity O(1)
 
 void Graph::resetVisited()
 {
-    for (int i = 0; i < this->numVertices; i++)
+    for (int i = 0; i < this->numNodes; i++)
         this->visited[i] = false;
 } // Complexity O(V)
 
 void Graph::printGraph()
 {
-    for (int i = 1; i < this->numVertices; i++)
+    for (int i = 1; i < this->numNodes; i++)
     {
         cout << "\nVertex " << i << ":";
         for (auto x : this->adjList[i])
             cout << " -> " << x;
         cout << endl;
     }
-} // Time Complexity O(n)
+}// Complexity O(V + E)
+
+void Graph::InOutDegree(){
+    int maxIn = 0;
+    int maxOut = 0; 
+    int indexBeg = 0;
+    int indexEnd = 0;
+    for(int i = 0; i < numNodes; i++){
+        if(degreeList[i][0] > maxIn){
+            maxIn = degreeList[i][0];
+            indexBeg = i;
+        }
+        if(degreeList[i][1] > maxOut){
+            maxOut = degreeList[i][1];
+            indexEnd = i;
+        }
+    }
+    cout << "\tMax Outdegree -> : '" << maxIn << "'  from Node: '" << indexBeg << "'" << endl;
+    cout << "\n\tMax Indegree  <- : '" << maxOut << "'  from Node: '" << indexEnd << "'\n" << endl;
+};// Time Complexity O(V); O👎
+
+void Graph::nodeDegree(){
+    for(int i = 0; i < numNodes; i++){
+        cout << "Element from the IP: '" << i << "'\t Outdegree -> : '" << degreeList[i][0] <<
+         "'\t Indegree <- : '" << degreeList[i][1] << "'"<< endl;
+    }// Time Complexity O(V); O👎
+}
 
 // Take the IP from the line 
 string getIP(string record){
@@ -112,7 +123,7 @@ string getIP(string record){
         }
     }
     return record.substr(indexBeg, indexEnd); // "112.12.122.12.1111"
-} // Time Complexity O(n)
+} // Time Complexity O👎
 
 // Take the IP without the port 
 string getIPAccess(string IP){
@@ -121,33 +132,8 @@ string getIPAccess(string IP){
         access += IP[i];
     }
     return access;
-} // Time Complexity O(n)
+} // Time Complexity O👎
 
-void Graph::maxAndMinDegree(){
-    int maxInDegree = 0, maxOutDegree = 0, cont1 = 0, cont2 = 0;
-    for(int i = 0; i < numVertices; i++){
-        if(matrixDegreeList[i][0] > maxInDegree){
-            maxInDegree = matrixDegreeList[i][0];
-            cont1 = i;
-        }
-        if(matrixDegreeList[i][1] > maxOutDegree){
-            maxOutDegree = matrixDegreeList[i][1];
-            cont2 = i;
-        }
-    }
-    cout << "The Node With More OutDegree is: " << cont1 << " with: " << maxInDegree << endl;
-    cout << "The Node With More InDegree is: " << cont2 << " with "<< maxOutDegree << endl<<endl;
-}; //Time Complexity: O(n) 
-
-void Graph::printDegreeNodes(){
-    cout << "------------------------------------------" << endl;
-    cout << "Node\t\tOutDegree\tInDegree" << " | " << endl;
-    cout << "------------------------------------------" << endl;
-    for(int i = 0; i < numVertices; i++){
-        cout << i << "\t\t"<< matrixDegreeList[i][0] << "\t\t" << matrixDegreeList[i][1] << "\t | " << endl;
-    }
-    cout << "------------------------------------------" << endl;
-} // Time Complexity: O(n) 
 
 int main(){
     fflush(stdin);
@@ -159,7 +145,7 @@ int main(){
     vector<string> lines;
     string line;
     string IPnumber;
-    int val = 0;
+    int num = 0;
 
     // Do not be afraid of what is happening here
     // You are safe now my child
@@ -168,13 +154,13 @@ int main(){
         //Time complexity: O(n log n)
         string s = IPnumber;
         //a function to convert the string "1.2.3.4" to a char array
-        char* char_arr;
+        char* charArray;
         string str_obj(s);
-        char_arr = &str_obj[0];
+        charArray = &str_obj[0];
         //create a vector of char* to hold the tokens
         vector<char*> v;
         char * pch;
-        pch = strtok (char_arr,".");
+        pch = strtok (charArray,".");
         while (pch != NULL)
         {
         v.push_back(pch);
@@ -182,24 +168,25 @@ int main(){
         }
         for(int i=0; i<v.size(); i++)
         {
-            int val = i;
-            int value1 = atoi(v[val]);
-            int value2 = 0;
-            if(val + 1 < v.size())
+            int num = i;
+            int vertex = atoi(v[num]);
+            int value = 0;
+            if(num + 1 < v.size())
             {
-                int value2 = atoi(v[val+1]);
-                g.loadGraph(value1, value2);
+                int value = atoi(v[num+1]);
+                g.loadGraph(vertex, value);
             }
             else
             {
-                g.loadGraph(value2, 0);  
+                g.loadGraph(value, 0);  
             }
         }
     }
+    //g.printGraph(); //Ver el grafo en consola
     OurReadFile.close();
-    cout << "\n------ List With In and Out Degrees ------\n" << endl;
-    g.printDegreeNodes();
-    cout << "\n--- Nodes With More In And Out Degrees ---\n" << endl;
-    g.maxAndMinDegree();
+    cout << "\n---------------------------------- Degree List --------------------------------\n" << endl;
+    g.nodeDegree();
+    cout << "\n---------------------------------- Max. In & Out Degrees --------------------------------\n" << endl;
+    g.InOutDegree();
     return 0;
 }
